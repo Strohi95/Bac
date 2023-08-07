@@ -1,0 +1,10 @@
+Variante 0: Nur eine Zufallszahl zu Beginn
+
+Variante 1: Zu jeder Phase wird jedem Node eine neue Zufallszahl zugewiesen
+
+RandomNumber 0: [0, 1]
+RandomNumber 1: [1, 10] || [1, 100]
+RandomNumber 2: [1, n]
+RandomNumber 3: [1, DELTA] || [1, 2*DELTA]          DELTA = Maximum Degree
+RandomNumber 4: [1, DEG(v)] || [1, 2*DEG(v)]
+RandomNumber 5: [1, (MAX_DEG(v) v  eN+(v))]
