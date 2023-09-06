@@ -8,3 +8,10 @@ RandomNumber 2: [1, n]
 RandomNumber 3: [1, DELTA] || [1, 2*DELTA]          DELTA = Maximum Degree
 RandomNumber 4: [1, DEG(v)] || [1, 2*DEG(v)]
 RandomNumber 5: [1, (MAX_DEG(v) v  eN+(v))]
+
+
+
+
+main.py  =  plots for data
+main.c  =  uncompiled c file
+a.out  =  compiled c file
