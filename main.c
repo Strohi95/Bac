@@ -159,10 +159,10 @@ void freeStuff(struct node* nodes, int n)
 
 int main( )
 {
-    int maxIterations = 10;
+    int maxIterations = 1000;
 
     float p = 0.25f;
-    const int n = 1000;
+    int n = 800;
     int variant = 1;
     int rnv = 0;
 
@@ -170,14 +170,18 @@ int main( )
 
     for(int itCounter = 0; itCounter < maxIterations; itCounter++)
     {
+        n = rand() % 1000 + 1;
+        p = ((double)rand()) / ((double)RAND_MAX);
+
         struct node* nodes = malloc(sizeof(struct node) * n);
+
         printf("Initialize!\n");
         initializeNodes(nodes, n, variant, rnv);
         printf("Building Graph!\n");
         buildGraph(nodes, n, p);
         printf("Build Set!\n");
         writeLog(n, p, maxIndependentSet(nodes, n, variant, rnv), variant, rnv);
-        printGraph(nodes, n);
+        //printGraph(nodes, n);
 
         freeStuff(nodes, n);
     }
