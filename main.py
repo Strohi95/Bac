@@ -35,21 +35,25 @@ def clearData():
 
 
 def drawPlot(x, p_vertex, iterations):
-    fig = plt.figure()
+    fig = plt.figure(figsize=(20, 10))
 
-    figure, axis = plt.subplots(1, 2, sharey=True, figsize = (20, 10))
-
+    axis = fig.add_subplot(2, 2, 1)
     nodes = [eval(i) for i in Nodes_]
-    p_vertex = [eval(i) for i in P_Vertex_]
     iterations = [eval(i) for i in Iterations_]
+    axis.scatter(nodes, iterations, s=2, c="green", label="Nodes")
+    axis.legend(loc="upper left")
+    axis.set_title("Iterations per Num(Nodes)")
 
-    axis[0].scatter(nodes, iterations, s=10, c="green", label="Nodes")
-    axis[0].legend(loc="upper left")
-    axis[0].title.set_text("Iterations per Num(Nodes)")
+    axis = fig.add_subplot(2, 2, 3)
+    p_vertex = [eval(i) for i in P_Vertex_]
+    axis.scatter(p_vertex, iterations, s=2, c="blue", label="P(Vertex)")
+    axis.legend(loc="upper left")
+    axis.set_title("Iterations per P(Vertex)")
 
-    axis[1].scatter(p_vertex, iterations, s=10, c="blue", label="P(Vertex)")
-    axis[1].legend(loc="upper left")
-    axis[1].title.set_text("Iterations per P(Vertex)")
+    axis = fig.add_subplot(1, 2, 2, projection='3d')
+    axis.plot_trisurf(nodes, p_vertex, iterations)
+    axis.view_init(elev=10., azim=20)
+    axis.set_title("Iterations per Nodes and P(Vertex)")
 
     plt.show()
 
