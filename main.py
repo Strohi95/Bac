@@ -1,15 +1,17 @@
+from typing import List, Any
+
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
 
 values = [] * 5
-x = []
-y = []
-z = []
+Nodes_: List[int] = []
+P_Vertex_: List[float] = []
+Iterations_: List[int] = []
 
 
 def readFile():
-    logFile = open("../logs/logFile.txt")
+    logFile = open("logs/logFile.txt")
     lines = logFile.readlines()
 
     for line in lines:
@@ -19,11 +21,11 @@ def readFile():
         valueEntry[0] = splitLine[0].split(" ")[1]
         valueEntry[1] = splitLine[1].split(" ")[1]
         valueEntry[2] = splitLine[2].split(" ")[1]
-        x.append(valueEntry[2])
+        Nodes_.append(valueEntry[2])
         valueEntry[3] = splitLine[3].split(" ")[1]
-        y.append(valueEntry[3])
+        P_Vertex_.append(valueEntry[3])
         valueEntry[4] = splitLine[4].split(" ")[1][:-1]
-        z.append(valueEntry[4])
+        Iterations_.append(valueEntry[4])
 
         values.append(valueEntry)
 
@@ -31,27 +33,38 @@ def readFile():
 def clearData():
     return
 
-def drawPlot(x, y, z):
-    fig = plt.figure()
+
+def drawPlot(x, p_vertex, iterations):
+    # fig = plt.figure()
 
     # syntax for 3-D projection
-    ax = plt.axes(projection='3d')
+    # ax = plt.axes(projection='3d')
+
+    figure, axis = plt.subplots(2)
 
     # defining axes
-    x = res = [eval(i) for i in x]
-    y = res = [eval(i) for i in y]
-    z = res = [eval(i) for i in z]
+    nodes = [eval(i) for i in Nodes_]
+    p_vertex = [eval(i) for i in P_Vertex_]
+    iterations = [eval(i) for i in Iterations_]
 
+    axis[0].scatter(nodes, iterations, s=15)
 
-    ax.scatter(x, y, z)
+    # x-axis label
+    plt.xlabel('x - axis')
+    # frequency label
+    plt.ylabel('y - axis')
+    # plot title
+    plt.title('My scatter plot!')
+    # showing legend
+    plt.legend()
 
-    # syntax for plotting
-    ax.set_title('teststuff')
+    # function to show the plot
     plt.show()
+
 
 def main():
     readFile()
-    drawPlot(x, y, z)
+    drawPlot(Nodes_, P_Vertex_, Iterations_)
 
 
 if __name__ == '__main__':
