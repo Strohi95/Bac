@@ -35,30 +35,22 @@ def clearData():
 
 
 def drawPlot(x, p_vertex, iterations):
-    # fig = plt.figure()
+    fig = plt.figure()
 
-    # syntax for 3-D projection
-    # ax = plt.axes(projection='3d')
+    figure, axis = plt.subplots(1, 2, sharey=True, figsize = (20, 10))
 
-    figure, axis = plt.subplots(2)
-
-    # defining axes
     nodes = [eval(i) for i in Nodes_]
     p_vertex = [eval(i) for i in P_Vertex_]
     iterations = [eval(i) for i in Iterations_]
 
-    axis[0].scatter(nodes, iterations, s=15)
+    axis[0].scatter(nodes, iterations, s=10, c="green", label="Nodes")
+    axis[0].legend(loc="upper left")
+    axis[0].title.set_text("Iterations per Num(Nodes)")
 
-    # x-axis label
-    plt.xlabel('x - axis')
-    # frequency label
-    plt.ylabel('y - axis')
-    # plot title
-    plt.title('My scatter plot!')
-    # showing legend
-    plt.legend()
+    axis[1].scatter(p_vertex, iterations, s=10, c="blue", label="P(Vertex)")
+    axis[1].legend(loc="upper left")
+    axis[1].title.set_text("Iterations per P(Vertex)")
 
-    # function to show the plot
     plt.show()
 
 
