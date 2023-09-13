@@ -157,7 +157,7 @@ void freeStuff(struct node* nodes, int n)
     free(nodes);
 }
 
-int main( )
+void createNewGraph()
 {
     int maxIterations = 1000;
 
@@ -168,12 +168,12 @@ int main( )
 
     oneTimeInitStuff();
 
-    for(int itCounter = 0; itCounter < maxIterations; itCounter++)
+    for (int itCounter = 0; itCounter < maxIterations; itCounter++)
     {
         n = rand() % 1000 + 1;
-        p = ((double)rand()) / ((double)RAND_MAX);
+        p = ((double) rand()) / ((double) RAND_MAX);
 
-        struct node* nodes = malloc(sizeof(struct node) * n);
+        struct node *nodes = malloc(sizeof(struct node) * n);
 
         printf("Initialize!\n");
         initializeNodes(nodes, n, variant, rnv);
@@ -185,6 +185,33 @@ int main( )
 
         freeStuff(nodes, n);
     }
+}
+
+int buildTSVGraph(char* graph)
+{
+    return 0;
+}
+
+void createTSVGraph()
+{
+    char *graphSelection = "graphs/MAWI_Datasets_Graph_1.tsv";
+
+    buildTSVGraph(graphSelection);
+}
+
+int runAlgorithm(int graphType)
+{
+    switch (graphType)
+    {
+        case 1: createNewGraph();
+        case 2: createTSVGraph();
+        default: createNewGraph();
+    }
 
     return 0;
+}
+
+int main( )
+{
+    return runAlgorithm(1);;
 }
