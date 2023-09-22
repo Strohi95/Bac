@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
+#include <string.h>
 
 struct node {
     int id;
+    int neighbourCount;
     struct node** neighbours;
     double value;
 };
@@ -189,14 +191,113 @@ void createNewGraph()
 
 int buildTSVGraph(char* graph)
 {
+    size_t len = 0;
+    ssize_t read;
+    char* line = NULL;
+    int nodeCount = 2;
+    const char s[2] = "\t";
+    void* allocReturn;
+
+    struct node *nodes = malloc(sizeof(struct node) * 2);
+
+    FILE *tsvFile = fopen ( graph, "r+" );
+
+    //Manually add first two Nodes to array
+    if((read = getline(&line, &len, tsvFile)) != -1)
+    {
+        nodes[0].id = atoi(strtok(line, s));
+        nodes[0].neighbours = malloc(sizeof(struct node*));
+        nodes[1].id = atoi(strtok(line, s));
+        nodes[1].neighbours = malloc(sizeof(struct node*));
+
+        nodes[0].neighbours[0] = &nodes[1];
+        nodes[1].neighbours[0] = &nodes[0];
+    }
+    else
+        return -1;
+
+    while ((read = getline(&line, &len, tsvFile)) != -1)
+    {
+        int existONode = 0;
+        int existTNode = 0;
+        int originID = atoi(strtok(line, s));
+        int targetID = atoi(strtok(line, s));
+        int originPos = 0;
+        int targetPos = 0;
+
+        int itCounter = 0;
+
+        do
+        {
+            if(nodes[itCounter].id == originID)
+            {
+                originPos = itCounter;
+                existONode = 1;
+            }
+            if(nodes[itCounter].id == targetID)
+            {
+                targetPos = itCounter;
+                existTNode = 1;
+            }
+
+            if(!existONode)
+            {
+               allocReturn = realloc(nodes, sizeof(struct node) * (++nodeCount));
+               if(allocReturn == NULL)
+                   return -2;
+               nodes = allocReturn;
+               nodes[nodeCount-1].id = originID;
+               nodes[nodeCount-1].neighbourCount = 1;
+               nodes[nodeCount-1].neighbours = malloc(sizeof(struct node*));
+               originPos = nodeCount-1;
+            }
+            else
+            {
+                nodes[originPos].neighbourCount++;
+                allocReturn = realloc(nodes[originPos].neighbours, sizeof(struct node*) * (nodes[originPos].neighbourCount));
+                if(allocReturn == NULL)
+                    return -2;
+                nodes[originPos].neighbours = allocReturn;
+            }
+
+            if(!existTNode)
+            {
+                allocReturn = realloc(nodes, sizeof(struct node) * (++nodeCount));
+                if(allocReturn == NULL)
+                    return -2;
+                nodes = allocReturn;
+                nodes[nodeCount-1].id = originID;
+                nodes[nodeCount-1].neighbourCount = 1;
+                nodes[nodeCount-1].neighbours = malloc(sizeof(struct node*));
+                targetPos = nodeCount-1;
+            }
+            else
+            {
+                nodes[originPos].neighbourCount++;
+                allocReturn = realloc(nodes[targetPos].neighbours, sizeof(struct node*) * (nodes[targetPos].neighbourCount));
+                if(allocReturn == NULL)
+                    return -2;
+                nodes[targetPos].neighbours = allocReturn;
+            }
+
+            nodes[originPos].neighbours[nodes[originPos].neighbourCount-1] = &nodes[targetPos];
+            nodes[targetPos].neighbours[nodes[targetPos].neighbourCount-1] = &nodes[originPos];
+
+            itCounter++;
+        }
+        while (itCounter < nodeCount);
+    }
+
     return 0;
 }
 
-void createTSVGraph()
+int createTSVGraph()
 {
     char *graphSelection = "graphs/MAWI_Datasets_Graph_1.tsv";
 
     buildTSVGraph(graphSelection);
+
+    return 0;
 }
 
 int runAlgorithm(int graphType)
@@ -204,7 +305,7 @@ int runAlgorithm(int graphType)
     switch (graphType)
     {
         case 1: createNewGraph();
-        case 2: createTSVGraph();
+        case 2: return createTSVGraph();
         default: createNewGraph();
     }
 
@@ -213,5 +314,5 @@ int runAlgorithm(int graphType)
 
 int main( )
 {
-    return runAlgorithm(1);;
+    return runAlgorithm(2);;
 }
