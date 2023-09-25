@@ -291,7 +291,7 @@ int buildTSVGraph(char* graph)
         }
         else
         {
-            nodes[originPos].neighbourCount += 1;
+            nodes[targetPos].neighbourCount += 1;
             allocReturn = realloc(nodes[targetPos].neighbours, sizeof(struct node*) * (nodes[targetPos].neighbourCount));
             if(allocReturn == NULL)
                 return -2;
