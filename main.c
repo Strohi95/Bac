@@ -133,8 +133,8 @@ void printGraph(struct node* nodes, int n)
 
     for(int nodeIt = 0; nodeIt < n; nodeIt++)
     {
-        printf("id: %d | value: %f\n", nodes[nodeIt].id, nodes[nodeIt].value);
-        for (int vertexIt = 0; vertexIt < n; vertexIt++)
+        printf("id: %d | ncount: %d\n", nodes[nodeIt].id, nodes[nodeIt].neighbourCount);
+        for (int vertexIt = 0; vertexIt < nodes[nodeIt].neighbourCount; vertexIt++)
         {
             if(nodes[nodeIt].neighbours[vertexIt] != NULL)
                 printf("\tvertex %d to node %d\n", vertexIt, nodes[nodeIt].neighbours[vertexIt]->id);
@@ -195,7 +195,7 @@ int buildTSVGraph(char* graph)
     ssize_t read;
     char* line = NULL;
     int nodeCount = 2;
-    const char s[2] = "\t";
+    const char* s = "\t";
     void* allocReturn;
 
     struct node *nodes = malloc(sizeof(struct node) * 2);
@@ -205,10 +205,13 @@ int buildTSVGraph(char* graph)
     //Manually add first two Nodes to array
     if((read = getline(&line, &len, tsvFile)) != -1)
     {
+
         nodes[0].id = atoi(strtok(line, s));
         nodes[0].neighbours = malloc(sizeof(struct node*));
-        nodes[1].id = atoi(strtok(line, s));
+        nodes[0].neighbourCount += 1;
+        nodes[1].id = atoi(strtok(NULL, s));
         nodes[1].neighbours = malloc(sizeof(struct node*));
+        nodes[1].neighbourCount += 1;
 
         nodes[0].neighbours[0] = &nodes[1];
         nodes[1].neighbours[0] = &nodes[0];
@@ -216,12 +219,12 @@ int buildTSVGraph(char* graph)
     else
         return -1;
 
-    while ((read = getline(&line, &len, tsvFile)) != -1)
+    while ((read = getline(&line, &len, tsvFile)) != -1 && nodeCount < 100)
     {
         int existONode = 0;
         int existTNode = 0;
         int originID = atoi(strtok(line, s));
-        int targetID = atoi(strtok(line, s));
+        int targetID = atoi(strtok(NULL, s));
         int originPos = 0;
         int targetPos = 0;
 
@@ -229,64 +232,77 @@ int buildTSVGraph(char* graph)
 
         do
         {
+            //printf("nodes[itCounter].id: %d, originID: %d, targetID: %d\n", nodes[itCounter].id, originID, targetID);
+
             if(nodes[itCounter].id == originID)
             {
+               // printf("EXIT NODE ID\n");
                 originPos = itCounter;
                 existONode = 1;
             }
             if(nodes[itCounter].id == targetID)
             {
+                // printf("EXIST TARGET ID\n");
                 targetPos = itCounter;
                 existTNode = 1;
             }
 
-            if(!existONode)
-            {
-               allocReturn = realloc(nodes, sizeof(struct node) * (++nodeCount));
-               if(allocReturn == NULL)
-                   return -2;
-               nodes = allocReturn;
-               nodes[nodeCount-1].id = originID;
-               nodes[nodeCount-1].neighbourCount = 1;
-               nodes[nodeCount-1].neighbours = malloc(sizeof(struct node*));
-               originPos = nodeCount-1;
-            }
-            else
-            {
-                nodes[originPos].neighbourCount++;
-                allocReturn = realloc(nodes[originPos].neighbours, sizeof(struct node*) * (nodes[originPos].neighbourCount));
-                if(allocReturn == NULL)
-                    return -2;
-                nodes[originPos].neighbours = allocReturn;
-            }
-
-            if(!existTNode)
-            {
-                allocReturn = realloc(nodes, sizeof(struct node) * (++nodeCount));
-                if(allocReturn == NULL)
-                    return -2;
-                nodes = allocReturn;
-                nodes[nodeCount-1].id = originID;
-                nodes[nodeCount-1].neighbourCount = 1;
-                nodes[nodeCount-1].neighbours = malloc(sizeof(struct node*));
-                targetPos = nodeCount-1;
-            }
-            else
-            {
-                nodes[originPos].neighbourCount++;
-                allocReturn = realloc(nodes[targetPos].neighbours, sizeof(struct node*) * (nodes[targetPos].neighbourCount));
-                if(allocReturn == NULL)
-                    return -2;
-                nodes[targetPos].neighbours = allocReturn;
-            }
-
-            nodes[originPos].neighbours[nodes[originPos].neighbourCount-1] = &nodes[targetPos];
-            nodes[targetPos].neighbours[nodes[targetPos].neighbourCount-1] = &nodes[originPos];
-
             itCounter++;
         }
         while (itCounter < nodeCount);
+
+        //printGraph(nodes, nodeCount);
+        //printf("\n\n\n\n");
+
+        if(!existONode)
+        {
+            //printf("exist nooooooot\n");
+
+            allocReturn = realloc(nodes, sizeof(struct node) * (++nodeCount));
+            //printf("NodeCount: %d\n", nodeCount);
+            if(allocReturn == NULL)
+                return -2;
+            nodes = allocReturn;
+            nodes[nodeCount-1].id = originID;
+            nodes[nodeCount-1].neighbourCount = 1;
+            nodes[nodeCount-1].neighbours = malloc(sizeof(struct node*));
+            originPos = nodeCount-1;
+        }
+        else
+        {
+            //printf("exist\n");
+            nodes[originPos].neighbourCount += 1;
+            allocReturn = realloc(nodes[originPos].neighbours, sizeof(struct node*) * (nodes[originPos].neighbourCount));
+            if(allocReturn == NULL)
+                return -2;
+            nodes[originPos].neighbours = allocReturn;
+        }
+
+        if(!existTNode)
+        {
+            allocReturn = realloc(nodes, sizeof(struct node) * (++nodeCount));
+            if(allocReturn == NULL)
+                return -2;
+            nodes = allocReturn;
+            nodes[nodeCount-1].id = targetID;
+            nodes[nodeCount-1].neighbourCount = 1;
+            nodes[nodeCount-1].neighbours = malloc(sizeof(struct node*));
+            targetPos = nodeCount-1;
+        }
+        else
+        {
+            nodes[originPos].neighbourCount += 1;
+            allocReturn = realloc(nodes[targetPos].neighbours, sizeof(struct node*) * (nodes[targetPos].neighbourCount));
+            if(allocReturn == NULL)
+                return -2;
+            nodes[targetPos].neighbours = allocReturn;
+        }
+
+        nodes[originPos].neighbours[nodes[originPos].neighbourCount-1] = &nodes[targetPos];
+        nodes[targetPos].neighbours[nodes[targetPos].neighbourCount-1] = &nodes[originPos];
     }
+
+    printGraph(nodes, nodeCount);
 
     return 0;
 }
