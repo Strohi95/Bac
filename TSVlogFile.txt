@@ -1,0 +1,110 @@
+Variant: 2	RandomNumber: 0	Nodes: 100	Iterations: 2
+Variant: 2	RandomNumber: 0	Nodes: 100	Iterations: 3
+Variant: 2	RandomNumber: 0	Nodes: 100	Iterations: 2
+Variant: 2	RandomNumber: 0	Nodes: 100	Iterations: 3
+Variant: 2	RandomNumber: 0	Nodes: 100	Iterations: 2
+Variant: 2	RandomNumber: 0	Nodes: 100	Iterations: 3
+Variant: 2	RandomNumber: 0	Nodes: 100	Iterations: 2
+Variant: 2	RandomNumber: 0	Nodes: 100	Iterations: 1
+Variant: 2	RandomNumber: 0	Nodes: 100	Iterations: 2
+Variant: 2	RandomNumber: 0	Nodes: 100	Iterations: 1
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 4
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 5
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 4
+Variant: 2	Nodes: 100000	Iterations: 4
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 4
+Variant: 2	Nodes: 100000	Iterations: 4
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 4
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 4
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 4
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 4
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 4
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 4
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 4
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 4
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3
+Variant: 2	Nodes: 100000	Iterations: 3

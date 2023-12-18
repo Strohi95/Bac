@@ -3,12 +3,26 @@
 #include <stdlib.h>
 #include <string.h>
 
+typedef struct node Node;
+
 struct node {
     int id;
     int neighbourCount;
-    struct node** neighbours;
     double value;
+    Node* neighbours[];
 };
+
+int errorHandler(int errorCode)
+{
+    switch (errorCode)
+    {
+        case -1: printf("\n\nEMPTY TSV FILE!\n\n");
+                 return 0;
+        case -2: printf("\n\nMEMORY ISSUES!\n\n");
+                 return 0;
+        default: return 1;
+    }
+}
 
 double numberGenerator(int rnv, int n)
 {
@@ -21,97 +35,58 @@ double numberGenerator(int rnv, int n)
     }
 }
 
-int initializeNodes(struct node* nodes, int n, int variant, int rnv)
+int setCompleted(Node*** nodes, int n)
 {
     for(int nodeIt = 0; nodeIt < n; nodeIt++)
-    {
-        nodes[nodeIt].id = nodeIt;
-        nodes[nodeIt].neighbours = malloc(sizeof(struct node*) * n);
-        if(variant == 0)
-            nodes[nodeIt].value = numberGenerator(rnv, n);
-        else if(variant == 1)
-            nodes[nodeIt].value = 0;
-
-        for(int vertexIt = 0; vertexIt < n; vertexIt++)
-            nodes[nodeIt].neighbours[vertexIt] = NULL;
-    }
-
-    return 0;
-}
-
-int buildGraph(struct node* nodes, int n, float p)
-{
-    for(int nodeIt = 0; nodeIt < n; nodeIt++)
-    {
-        for(int vertexIt = 0; vertexIt < n; vertexIt++)
-        {
-            if(nodeIt == vertexIt)
-                continue;
-
-            float ran = numberGenerator(0, n);
-
-            if(ran <= p)
-            {
-                nodes[nodeIt].neighbours[vertexIt] = &nodes[vertexIt];
-                nodes[vertexIt].neighbours[nodeIt] = &nodes[nodeIt];
-            }
-        }
-    }
-
-    return 0;
-}
-
-int setCompleted(struct node* nodes, int n)
-{
-    for(int nodeIt = 0; nodeIt < n; nodeIt++)
-        if(nodes[nodeIt].value != 1111 && nodes[nodeIt].value != -10)
+        if((*nodes)[nodeIt]->value != 1111 && (*nodes)[nodeIt]->value != -10)
             return 0;
 
     return 1;
 }
 
-void setRValue(struct node* nodes, int n, int rnv)
+void setRValue(Node*** nodes, int n, int rnv)
 {
     for(int nodeIt = 0; nodeIt < n; nodeIt++)
     {
-        if(nodes[nodeIt].value != 1111 && nodes[nodeIt].value != -10)
-            nodes[nodeIt].value = numberGenerator(rnv, n);
+        (*nodes)[nodeIt]->value = numberGenerator(rnv, n);
     }
 }
 
-int maxIndependentSet(struct node* nodes, int n, int variant, int rnv)
+int maxIndependentSet(Node*** nodes, int n, int variant, int rnv)
 {
     int iterations = 0;
 
     while(!setCompleted(nodes, n))
     {
         if(variant == 1)
-            setRValue(nodes, n, rnv);
+            continue; //setRValue(nodes, n, rnv);
 
         for (int nodeIt = 0; nodeIt < n; nodeIt++)
         {
             int localMax = 1, inSetN = 0;
 
-            if (nodes[nodeIt].value == 1111 || nodes[nodeIt].value == -10)
+            if ((*nodes)[nodeIt]->value == 1111 || (*nodes)[nodeIt]->value == -10)
                 continue;
-
-            for (int nIt = 0; nIt < n; nIt++)
+            //printf("nullzig\n\n");
+            for (int nIt = 0; nIt < (*nodes)[nodeIt]->neighbourCount; nIt++)
             {
-                if (nodes[nodeIt].neighbours[nIt] == NULL)
+                //printf("\n\nDEBUG[NodeID: %d | NodeValue: %f | NeighborID: %d | NeighborValue: %f]\n\n",
+                      // (*nodes)[nodeIt]->id ,(*nodes)[nodeIt]->value, (*nodes)[nodeIt]->neighbours[nIt]->id, (*nodes)[nodeIt]->neighbours[nIt]->value);
+                if ((*nodes)[nodeIt]->neighbours[nIt] == NULL)
                     continue;
-
-                if (nodes[nodeIt].value < nodes[nodeIt].neighbours[nIt]->value)
+                //printf("einszig\n\n");
+                if ((*nodes)[nodeIt]->value < (*nodes)[nodeIt]->neighbours[nIt]->value)
                     localMax = 0;
-                if (nodes[nodeIt].neighbours[nIt]->value == 1111)
+                //printf("schwierig\n\n");
+                if ((*nodes)[nodeIt]->neighbours[nIt]->value == 1111)
                     inSetN = 1;
             }
-
+            //printf("zweizig\n\n");
             if (localMax)
-                nodes[nodeIt].value = 1111;
+                (*nodes)[nodeIt]->value = 1111;
             if (inSetN)
-                nodes[nodeIt].value = -10;
+                (*nodes)[nodeIt]->value = -10;
         }
-
         iterations++;
     }
 
@@ -120,215 +95,207 @@ int maxIndependentSet(struct node* nodes, int n, int variant, int rnv)
 
 void writeLog(int n, float p, int iterations, int variant, int rnv)
 {
-    FILE *fptr = fopen("logs/logFile.txt", "a+");
-
-    fprintf(fptr, "Variant: %d\tRandomNumber: %d\tNodes: %d\tP(Vertex): %.2f\tIterations: %d\n", variant, rnv, n, p, iterations);
-
-    fclose(fptr);
+    if(p == 0.f)
+    {
+        FILE *fptr = fopen("logs/TSVlogFile.txt", "a+");
+        fprintf(fptr, "Variant: %d\tNodes: %d\tIterations: %d\n", variant, n, iterations);
+        fclose(fptr);
+    }
+    else
+    {
+        FILE *fptr = fopen("logs/logFile01.txt", "a+");
+        fprintf(fptr, "Variant: %d\tRandomNumber: %d\tNodes: %d\tIterations: %d\n", variant, rnv, n, iterations);
+        fclose(fptr);
+    }
 }
 
-void printGraph(struct node* nodes, int n)
+void logGraph(Node **nodes, int n)
 {
-    printf("\nPrinting current Graph!\n");
+    FILE *fptr = fopen("logs/tsvGraph.txt", "a+");
 
     for(int nodeIt = 0; nodeIt < n; nodeIt++)
     {
-        printf("id: %d | ncount: %d\n", nodes[nodeIt].id, nodes[nodeIt].neighbourCount);
-        for (int vertexIt = 0; vertexIt < nodes[nodeIt].neighbourCount; vertexIt++)
+        fprintf(fptr, "id: %d | nCount: %d | value: %f\n", nodes[nodeIt]->id, nodes[nodeIt]->neighbourCount, nodes[nodeIt]->value);
+        for (int vertexIt = 0; vertexIt < nodes[nodeIt]->neighbourCount; vertexIt++)
         {
-            if(nodes[nodeIt].neighbours[vertexIt] != NULL)
-                printf("\tvertex %d to node %d\n", vertexIt, nodes[nodeIt].neighbours[vertexIt]->id);
+            fprintf(fptr,"\tvertex %d to node %d\n", vertexIt, nodes[nodeIt]->neighbours[vertexIt]->id);
+        }
+    }
+    fclose(fptr);
+}
+
+void printGraph(Node **nodes, int n)
+{
+    printf("\nPrinting current Graph with %d nodes!\n", n);
+
+    for(int nodeIt = 0; nodeIt < n; nodeIt++)
+    {
+        printf("id: %d | nCount: %d | value: %f\n", nodes[nodeIt]->id, nodes[nodeIt]->neighbourCount, nodes[nodeIt]->value);
+        for (int vertexIt = 0; vertexIt < nodes[nodeIt]->neighbourCount; vertexIt++)
+        {
+            printf("\tvertex %d to node %d\n", vertexIt, nodes[nodeIt]->neighbours[vertexIt]->id);
         }
     }
 
     printf("\n\n\n");
 }
 
-void oneTimeInitStuff()
+void freeStuff(Node*** nodes, int n)
 {
-    srand(time(NULL));
+    /*for(int nodeIt = 0; nodeIt < n; nodeIt++)
+    {
+        free(nodes[nodeIt]);
+    }*/
+
+    free(*nodes);  // This should be outside the loop
 }
 
-void freeStuff(struct node* nodes, int n)
+int checkIfNodeExist(Node** nodes, int nodeCount, int nodeID)
 {
-    for(int nodeIt = 0; nodeIt < n; nodeIt++)
-    {
-        free(nodes[nodeIt].neighbours);
-    }
-
-    free(nodes);
-}
-
-void createNewGraph()
-{
-    int maxIterations = 1000;
-
-    float p = 0.25f;
-    int n = 800;
-    int variant = 1;
-    int rnv = 0;
-
-    oneTimeInitStuff();
-
-    for (int itCounter = 0; itCounter < maxIterations; itCounter++)
-    {
-        n = rand() % 1000 + 1;
-        p = ((double) rand()) / ((double) RAND_MAX);
-
-        struct node *nodes = malloc(sizeof(struct node) * n);
-
-        printf("Initialize!\n");
-        initializeNodes(nodes, n, variant, rnv);
-        printf("Building Graph!\n");
-        buildGraph(nodes, n, p);
-        printf("Build Set!\n");
-        writeLog(n, p, maxIndependentSet(nodes, n, variant, rnv), variant, rnv);
-        //printGraph(nodes, n);
-
-        freeStuff(nodes, n);
-    }
-}
-
-int buildTSVGraph(char* graph)
-{
-    size_t len = 0;
-    ssize_t read;
-    char* line = NULL;
-    int nodeCount = 2;
-    const char* s = "\t";
-    void* allocReturn;
-
-    struct node *nodes = malloc(sizeof(struct node) * 2);
-
-    FILE *tsvFile = fopen ( graph, "r+" );
-
-    //Manually add first two Nodes to array
-    if((read = getline(&line, &len, tsvFile)) != -1)
-    {
-
-        nodes[0].id = atoi(strtok(line, s));
-        nodes[0].neighbours = malloc(sizeof(struct node*));
-        nodes[0].neighbourCount += 1;
-        nodes[1].id = atoi(strtok(NULL, s));
-        nodes[1].neighbours = malloc(sizeof(struct node*));
-        nodes[1].neighbourCount += 1;
-
-        nodes[0].neighbours[0] = &nodes[1];
-        nodes[1].neighbours[0] = &nodes[0];
-    }
-    else
+    if(nodeCount == 0)
         return -1;
 
-    while ((read = getline(&line, &len, tsvFile)) != -1 && nodeCount < 100)
+    for(int nodeIt = 0; nodeIt < nodeCount; nodeIt++)
     {
-        int existONode = 0;
-        int existTNode = 0;
-        int originID = atoi(strtok(line, s));
-        int targetID = atoi(strtok(NULL, s));
-        int originPos = 0;
-        int targetPos = 0;
-
-        int itCounter = 0;
-
-        do
+        if(nodes[nodeIt]->id == nodeID)
         {
-            //printf("nodes[itCounter].id: %d, originID: %d, targetID: %d\n", nodes[itCounter].id, originID, targetID);
-
-            if(nodes[itCounter].id == originID)
-            {
-               // printf("EXIT NODE ID\n");
-                originPos = itCounter;
-                existONode = 1;
-            }
-            if(nodes[itCounter].id == targetID)
-            {
-                // printf("EXIST TARGET ID\n");
-                targetPos = itCounter;
-                existTNode = 1;
-            }
-
-            itCounter++;
+            return nodeIt;
         }
-        while (itCounter < nodeCount);
-
-        //printGraph(nodes, nodeCount);
-        //printf("\n\n\n\n");
-
-        if(!existONode)
-        {
-            //printf("exist nooooooot\n");
-
-            allocReturn = realloc(nodes, sizeof(struct node) * (++nodeCount));
-            //printf("NodeCount: %d\n", nodeCount);
-            if(allocReturn == NULL)
-                return -2;
-            nodes = allocReturn;
-            nodes[nodeCount-1].id = originID;
-            nodes[nodeCount-1].neighbourCount = 1;
-            nodes[nodeCount-1].neighbours = malloc(sizeof(struct node*));
-            originPos = nodeCount-1;
-        }
-        else
-        {
-            //printf("exist\n");
-            nodes[originPos].neighbourCount += 1;
-            allocReturn = realloc(nodes[originPos].neighbours, sizeof(struct node*) * (nodes[originPos].neighbourCount));
-            if(allocReturn == NULL)
-                return -2;
-            nodes[originPos].neighbours = allocReturn;
-        }
-
-        if(!existTNode)
-        {
-            allocReturn = realloc(nodes, sizeof(struct node) * (++nodeCount));
-            if(allocReturn == NULL)
-                return -2;
-            nodes = allocReturn;
-            nodes[nodeCount-1].id = targetID;
-            nodes[nodeCount-1].neighbourCount = 1;
-            nodes[nodeCount-1].neighbours = malloc(sizeof(struct node*));
-            targetPos = nodeCount-1;
-        }
-        else
-        {
-            nodes[targetPos].neighbourCount += 1;
-            allocReturn = realloc(nodes[targetPos].neighbours, sizeof(struct node*) * (nodes[targetPos].neighbourCount));
-            if(allocReturn == NULL)
-                return -2;
-            nodes[targetPos].neighbours = allocReturn;
-        }
-
-        nodes[originPos].neighbours[nodes[originPos].neighbourCount-1] = &nodes[targetPos];
-        nodes[targetPos].neighbours[nodes[targetPos].neighbourCount-1] = &nodes[originPos];
     }
 
-    printGraph(nodes, nodeCount);
+    return -1;
+}
+
+int addNode(Node*** nodes, int nodeCount, int nodeID)
+{
+    //printf("nC: %d\n", nodeCount);
+
+    if(nodeCount > 1)
+    {
+        *nodes = realloc(*nodes, sizeof(Node*) * (nodeCount + 1));
+    }
+
+    (*nodes)[nodeCount-1] = malloc(sizeof(Node) + sizeof(Node*));
+
+    (*nodes)[nodeCount-1]->id = nodeID;
+    (*nodes)[nodeCount-1]->value = numberGenerator(0, 0);
+    (*nodes)[nodeCount-1]->neighbourCount = 0;
+
+    //printf("ID STFUF; %d | NODEID: %d\n", (*nodes)[nodeCount-1]->id, nodeID);
+
+    return nodeCount-1;
+}
+
+int addNeighbors(Node*** nodes, int* nodeCount, int nodePos0, int nodePos1)
+{
+    Node* tempNode1 = (*nodes)[nodePos1];
+    Node* tempNode0 = (*nodes)[nodePos0];
+
+    //printf("n from %d to %d\n\n----------------------------------\n\n", (*nodes)[nodePos0]->id, (*nodes)[nodePos1]->id);
+
+    Node* updatedNodePos0 = realloc((*nodes)[nodePos0], sizeof(Node) + sizeof(Node*) * ((*nodes)[nodePos0]->neighbourCount + 1));
+    Node* updatedNodePos1 = realloc((*nodes)[nodePos1], sizeof(Node) + sizeof(Node*) * ((*nodes)[nodePos1]->neighbourCount + 1));
+
+    if (updatedNodePos0 == NULL || updatedNodePos1 == NULL)
+        return -1;
+
+    (*nodes)[nodePos0] = updatedNodePos0;
+    (*nodes)[nodePos1] = updatedNodePos1;
+
+    /*printf("from nodePos1: %d\n", tempNode->id);
+    printf("from nodePos1: %d\n", updatedNodePos1->id);
+    printf("from nodePos1: %d\n", (*nodes)[nodePos1]->id);*/
+    for(int nIt = 0; nIt < updatedNodePos0->neighbourCount; nIt++)
+    {
+        for(int nnIt = 0; nnIt < updatedNodePos0->neighbours[nIt]->neighbourCount; nnIt++)
+        {
+            if(updatedNodePos0->neighbours[nIt]->neighbours[nnIt] == tempNode0)
+                updatedNodePos0->neighbours[nIt]->neighbours[nnIt] = updatedNodePos0;
+        }
+        //printf("\nto n: %d\n", updatedNodePos0->neighbours[nIt]->id);
+    }
+
+
+    for(int nIt = 0; nIt < updatedNodePos1->neighbourCount; nIt++)
+    {
+        for(int nnIt = 0; nnIt < updatedNodePos1->neighbours[nIt]->neighbourCount; nnIt++)
+        {
+            if(updatedNodePos1->neighbours[nIt]->neighbours[nnIt] == tempNode1)
+                updatedNodePos1->neighbours[nIt]->neighbours[nnIt] = updatedNodePos1;
+        }
+        //printf("\nto n: %d\n", updatedNodePos1->neighbours[nIt]->id);
+    }
+
+    (*nodes)[nodePos0]->neighbours[(*nodes)[nodePos0]->neighbourCount] = (*nodes)[nodePos1];
+    (*nodes)[nodePos1]->neighbours[(*nodes)[nodePos1]->neighbourCount] = (*nodes)[nodePos0];
+
+    (*nodes)[nodePos0]->neighbourCount++;
+    (*nodes)[nodePos1]->neighbourCount++;
 
     return 0;
 }
 
-int createTSVGraph()
+int NodeInputHandler(Node*** nodes, int* nodeCount, int nodeID0, int nodeID1)
 {
+    int node0Pos = checkIfNodeExist(*nodes, *nodeCount, nodeID0);
+    int node1Pos = checkIfNodeExist(*nodes, *nodeCount, nodeID1);
+
+    if(node0Pos == -1) {
+        node0Pos = addNode(nodes, ++(*nodeCount), nodeID0);
+    }
+    //printGraph(*nodes, *nodeCount);
+    if(node1Pos == -1) {
+        node1Pos = addNode(nodes, ++(*nodeCount), nodeID1);
+    }
+
+    addNeighbors(nodes, nodeCount, node0Pos, node1Pos);
+
+    //printGraph(*nodes, *nodeCount);
+    return *nodeCount;
+}
+
+int createGraph()
+{
+    size_t len = 0;
+    char* line = NULL;
+    int lineCount = 0;
+    const char* s = "\t";
+    int numIterations = 100;
+
+    int nodeID0, nodeID1;
+
     char *graphSelection = "graphs/MAWI_Datasets_Graph_1.tsv";
 
-    buildTSVGraph(graphSelection);
+    FILE *tsvFile = fopen ( graphSelection, "r+" );
 
-    return 0;
-}
+    Node** nodes = malloc(sizeof(Node*));
+    int nodeCount = 0;
 
-int runAlgorithm(int graphType)
-{
-    switch (graphType)
+    while (getline(&line, &len, tsvFile) != -1 && nodeCount < 1000000)
     {
-        case 1: createNewGraph();
-        case 2: return createTSVGraph();
-        default: createNewGraph();
+        nodeID0 = atoi(strtok(line, s));
+        nodeID1 = atoi(strtok(NULL, s));
+
+        NodeInputHandler(&nodes, &nodeCount, nodeID0, nodeID1);
+
+        //printf("%d", lineCount);+
+
+        lineCount++;
     }
 
+    //logGraph(nodes, nodeCount);
+
+    for(int i = 0; i < numIterations; i++)
+    {
+        writeLog(nodeCount, 0.f, maxIndependentSet(&nodes, nodeCount, 2, 0), 2, 0);
+        setRValue(&nodes, nodeCount, 0);
+    }
+
+    freeStuff(&nodes, nodeCount);
     return 0;
 }
 
-int main( )
+int main()
 {
-    return runAlgorithm(2);;
+    return createGraph();
 }
